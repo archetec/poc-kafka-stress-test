@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+. /etc/confluent/docker/bash-config
+
+echo "===> Check if Kafka is healthy ..."
+
+if [[ -n "${SECURITY_PROTOCOL-}" ]] && [[ $SECURITY_PROTOCOL != "PLAINTEXT" ]]
+then
+
+    cub kafka-ready \
+        "${CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${CUB_KAFKA_TIMEOUT:-40}" \
+        -b "$BOOTSTRAP_SERVERS" \
+        --config /etc/kafka/consumer.properties
+else
+
+    cub kafka-ready \
+        "${CUB_KAFKA_MIN_BROKERS:-1}" \
+        "${CUB_KAFKA_TIMEOUT:-40}" \
+        -b "$BOOTSTRAP_SERVERS"
+fi
+
+

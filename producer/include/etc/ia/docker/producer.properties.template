@@ -1,0 +1,6 @@
+bootstrap.servers={{ env["BOOTSTRAP_SERVERS"] }}
+key.serializer=org.apache.kafka.common.serialization.ByteArraySerializer
+value.serializer=org.apache.kafka.common.serialization.ByteArraySerializer
+compression.type=gzip
+batch.size={{ env["PRODUCER_BATCH_SIZE"] }}
+linger.ms={{ env["PRODUCER_LINGER_MS"] }}

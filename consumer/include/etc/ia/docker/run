@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+
+. /etc/confluent/docker/bash-config
+
+echo "===> ENV Variables ..."
+show_env
+
+echo "===> User"
+id
+
+echo "===> Configuring ..."
+/etc/ia/docker/configure
+
+echo "===> Running preflight checks ... "
+/etc/ia/docker/ensure
+
+dub ensure TEST_TOPIC_NAME_PREFIX
+dub ensure TEST_NB_DATA_GENERATOR_THREADS
+
+echo "===> Consuming topics"
+for ((c=1; c<=TEST_NB_DATA_GENERATOR_THREADS; c++))
+do
+  touch ${TEST_TOPIC_NAME_PREFIX}${c}
+  kafka-console-consumer --topic "$TEST_TOPIC_NAME_PREFIX$c" \
+    --group $CONSUMER_GROUP_ID \
+    --from-beginning \
+    --bootstrap-server $BOOTSTRAP_SERVERS > ${TEST_TOPIC_NAME_PREFIX}${c}&
+done
+
+while true
+do
+  for ((c=1; c<=TEST_NB_DATA_GENERATOR_THREADS; c++))
+  do
+    wc -l ${TEST_TOPIC_NAME_PREFIX}${c}
+  done
+  sleep 10
+done

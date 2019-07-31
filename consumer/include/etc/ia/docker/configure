@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+. /etc/confluent/docker/bash-config
+
+dub ensure BOOTSTRAP_SERVERS
+dub ensure CONSUMER_GROUP_ID
+
+export KAFKA_LOG4J_OPTS="-Dlog4j.configuration=file:/etc/kafka/tools-log4j.properties"
+
+dub template "/etc/ia/docker/consumer.properties.template" "/etc/kafka/consumer.properties"
+dub template "/etc/ia/docker/tools-log4j.properties.template" "/etc/kafka/tools-log4j.properties"

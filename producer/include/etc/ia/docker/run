@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+. /etc/confluent/docker/bash-config
+
+echo "===> ENV Variables ..."
+show_env
+
+echo "===> User"
+id
+
+echo "===> Configuring ..."
+/etc/ia/docker/configure
+
+echo "===> Running preflight checks ... "
+/etc/ia/docker/ensure
+
+dub ensure TEST_TOPIC_NAME_PREFIX
+dub ensure TEST_NUM_RECORDS
+dub ensure TEST_RECORD_SIZE
+dub ensure TEST_THROUGHPUT
+dub ensure TEST_NB_DATA_GENERATOR_THREADS
+
+echo "===> Generating test data"
+for ((c=1; c<=TEST_NB_DATA_GENERATOR_THREADS; c++))
+do
+  kafka-producer-perf-test --topic "$TEST_TOPIC_NAME_PREFIX$c" \
+    --num-records $TEST_NUM_RECORDS \
+    --record-size $TEST_RECORD_SIZE \
+    --throughput $TEST_THROUGHPUT \
+    --producer-props \
+    acks=1 \
+    bootstrap.servers=$BOOTSTRAP_SERVERS \
+    batch.size=8196 &
+done
+
+wait

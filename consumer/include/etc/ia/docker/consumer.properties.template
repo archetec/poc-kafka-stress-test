@@ -1,0 +1,4 @@
+bootstrap.servers={{ env["BOOTSTRAP_SERVERS"] }}
+group.id={{ env["CONSUMER_GROUP_ID"] }}
+auto.offset.reset=earliest
+exclude.internal.topics=true
