@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-stress-consumer
+  labels:
+    app: kafka-stress-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-stress-consumer
+  template:
+    metadata:
+      labels:
+        app: kafka-stress-consumer
+    spec:
+      containers:
+      - name: kafka-stress-consumer
+        image: kafka-stress-consumer
+        imagePullPolicy: Never
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: "kafka-cp-kafka-headless:9092"
+        - name: CONSUMER_GROUP_ID
+          value: "test"
+        - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
+          value: "WARN"
+        - name: TEST_TOPIC_NAME_PREFIX
+          value: "ia-test-"
+        - name: TEST_NB_DATA_GENERATOR_THREADS
+          value: "2"
+        

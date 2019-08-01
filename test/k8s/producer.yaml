@@ -1,0 +1,33 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-stress-producer
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-stress-producer
+        image: kafka-stress-test
+        imagePullPolicy: Never
+        env:
+        - name: BOOTSTRAP_SERVERS
+          value: "kafka-cp-kafka-headless:9092"
+        - name: PRODUCER_BATCH_SIZE
+          value: "16384"
+        - name: PRODUCER_LINGER_MS
+          value: "1000"
+        - name: KAFKA_TOOLS_LOG4J_LOGLEVEL
+          value: "WARN"
+        - name: TEST_TOPIC_NAME_PREFIX
+          value: "ia-test-"
+        - name: TEST_NUM_RECORDS
+          value: "500000"
+        - name: TEST_RECORD_SIZE
+          value: "100"
+        - name: TEST_THROUGHPUT
+          value: "100"
+        - name: TEST_NB_DATA_GENERATOR_THREADS
+          value: "2"
+      restartPolicy: Never
+
+        
